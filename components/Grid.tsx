@@ -1,14 +1,9 @@
 import { message, Col, Popover, Row, Slider, Upload, UploadFile } from 'antd'
-import type { UploadProps } from 'antd'
-import { UploadChangeParam } from 'antd/lib/upload'
 import { useState } from 'react'
 import Image from 'next/image'
 
 import { InboxOutlined } from '@ant-design/icons'
 import React from 'react'
-import { state } from '@antv/g2plot/lib/adaptor/common'
-
-const { Dragger } = Upload
 
 // Define static constants
 const apiGateway: string = 'http://127.0.0.1:9999'
@@ -46,6 +41,8 @@ const Grid: React.FC = () => {
 
     // Check uploading state
     if (status === 'done') {
+      // Try to load metadata file
+
       isSucceeded = true
     }
 
@@ -61,7 +58,7 @@ const Grid: React.FC = () => {
   }
 
   // Remove the metadata
-  const onDropMetadata = (index: number) => {
+  const onRemoveMetadata = (index: number) => {
     if (index in videoMetadataMatrix) {
       delete videoMetadataMatrix[index]
       setvideoMetadataMatrix({
@@ -129,11 +126,12 @@ const Grid: React.FC = () => {
                         flex: 2,
                       }}
                     >
-                      <Dragger
+                      <Upload.Dragger
                         name='Metadata File (.video.json)'
                         multiple={false}
+                        customRequest={(req) => { console.log(req) }}
                         onChange={(info) => onChangeMetadata(row * gridSize + column, info.file)}
-                        onDrop={(_) => onDropMetadata(row * gridSize + column)}
+                        onRemove={(_) => onRemoveMetadata(row * gridSize + column)}
                       >
                         {
                           gridSize <= 4 &&
@@ -165,7 +163,7 @@ const Grid: React.FC = () => {
                             }}
                           />
                         }
-                      </Dragger>
+                      </Upload.Dragger>
                     </div>
                   </Popover >
                 )
