@@ -1,35 +1,17 @@
 import { Col, Row, Slider } from 'antd'
 import { useState } from 'react'
 import Image from 'next/image'
-import carView from '../assets/img/man-driving-car-from-rear-view.jpg'
-import carView2 from '../assets/img/360_F_309129539_Zy0wYLy0YEUGcuW1OZKaoCwf6WMQQs2q.jpeg'
-import carView3 from '../assets/img/inside-car-view-11826599.jpeg'
 
 import { InboxOutlined } from '@ant-design/icons'
 import type { UploadProps } from 'antd'
 import { message, Upload } from 'antd'
 import React from 'react'
 
-const { Dragger } = Upload
-
-const colCounts: Record<string, number> = {}
-const rowCounts: Record<string, number> = {}
-
 import { Popover } from 'antd'
 
-const content = (
-  <div>
-    <p>Name</p>
-    <p>Description</p>
-  </div>
-)
+const { Dragger } = Upload
 
-;[1, 2, 3, 4, 6, 8].forEach((value, i) => {
-  colCounts[i] = value
-})
-;[1, 2, 3, 4, 6, 8].forEach((value, i) => {
-  rowCounts[i] = value
-})
+const colCounts: Array<number> = [1, 2, 3, 4, 6, 8]
 
 const Grid: React.FC = () => {
   const [colCountKey, setColCountKey] = useState(1)
@@ -56,56 +38,12 @@ const Grid: React.FC = () => {
     },
   }
 
-  const cols = []
   const colCount = colCounts[colCountKey]
-  const rows = []
-
-  for (let j = 0; j < colCount; j++) {
-    cols.splice(0, cols.length)
-
-    for (let i = 0; i < colCount; i++) {
-      cols.push(
-        <Popover content={content} title={`Figure ${j * colCount + i}`}>
-          <Col
-            key={i.toString()}
-            span={24 / colCount}
-            style={{
-              background: 'transparent',
-              border: 0,
-            }}
-          >
-            <div
-              style={{
-                fontSize: '1.5rem',
-                height: '100%',
-                background: '#0092ff',
-                borderRadius: '4px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <Image
-                src={state === 0 ? carView : state === 1 ? carView2 : carView3}
-                alt="car"
-                style={{
-                  backgroundPosition: 'center',
-                  backgroundSize: 'contain',
-                  backgroundRepeat: 'no-repeat',
-                }}
-              />
-            </div>
-          </Col>
-        </Popover>,
-      )
-    }
-    rows.push(cols)
-  }
 
   return (
     <>
       <span>
-        {colCounts[colCountKey]} X {colCounts[colCountKey]}
+        {colCount} X {colCount}
       </span>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Slider
@@ -116,33 +54,84 @@ const Grid: React.FC = () => {
           max={Object.keys(colCounts).length - 1}
           value={colCountKey}
           onChange={setColCountKey}
-          marks={colCounts}
+          marks={colCounts.reduce((dict, value, index, array) => ({ ...dict, [index]: value }), {})}
           step={null}
           tooltip={{ formatter: value => value && colCounts[value] }}
         />
-        <Dragger
-          {...props}
-          style={{
-            width: '256px',
-            height: '256px',
-          }}
-        >
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined />
-          </p>
-          <p className="ant-upload-text">
-            Click or drag file to this area to upload
-          </p>
-        </Dragger>
       </div>
 
       <Row
-        gutter={[16, 16]}
         style={{
           height: '100%',
         }}
       >
-        {rows}
+        {
+          Array.from({ length: colCount }, (x, index) => index).map((row) =>
+            Array.from({ length: colCount }, (x, index) => index).map((column) =>
+              <Popover
+                title={`Figure ${row * colCount + column}`}
+                content={
+                  <div>
+                    <p>Name</p>
+                    <p>Description</p>
+                  </div>
+                }
+              >
+                <Col
+                  key={(row * colCount + column).toString()}
+                  span={24 / colCount}
+                  style={{
+                    background: 'transparent',
+                    border: 0,
+                  }}
+                >
+                  <div
+                    style={{
+                      fontSize: '1.5rem',
+                      height: '100%',
+                      borderRadius: '4px',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+
+                    <Dragger
+                      {...props}
+                    >
+                      {
+                        colCount <= 4 &&
+                        <p className="ant-upload-drag-icon">
+                          <InboxOutlined />
+                        </p>
+                      }
+                      {
+                        colCount <= 3 &&
+                        <p className="ant-upload-text">
+                          Click or drag file to this area to upload
+                        </p>
+                      }
+                      {
+                        colCount > 3 &&
+                        <p className="ant-upload-text" style={{ fontSize: '0.8rem', }}>
+                          Drag & Drop
+                        </p>
+                      }
+                      <Image
+                        src={"http://127.0.0.1:9999/vM51oQZ6C6YcQkuYVYiT7EnJ7v9exVE4yHvaJMmTzoP/image/bafkreihhfurndt3cebsf2sur5tjnvvrnmc4exqmfxxcf3dt5ex6ccmxxjm/73882"}
+                        alt="car"
+                        layout="fill"
+                        style={{
+                          backgroundPosition: 'center',
+                          backgroundSize: 'contain',
+                          backgroundRepeat: 'no-repeat',
+                        }}
+                      />
+                    </Dragger>
+                  </div>
+                </Col>
+              </Popover >
+            )
+          )}
       </Row>
     </>
   )
