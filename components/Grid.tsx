@@ -105,7 +105,7 @@ const Grid: React.FC = () => {
   return (
     <>
       <span>
-        {colCountKey + 1} X {colCountKey + 1}
+        {colCounts[colCountKey]} X {colCounts[colCountKey]}
       </span>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Slider
