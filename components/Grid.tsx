@@ -7,9 +7,9 @@ import React from 'react'
 
 // Define static constants
 const apiGateway: string = 'http://127.0.0.1:9999'
+const fps: number = 1.0
 const maxFrames: number = 7200
 const maxGridSize: number = 8
-const fps: number = 1.0
 const skipFrames: number = 0
 
 // Define derived static constants
@@ -25,7 +25,7 @@ type VideoMetadataMatrix = { [index: number]: VideoMetadata }
 // Define API callers
 const loadImage = (metadata: VideoMetadata | null, frameNumber: number) => {
   if (metadata == null) {
-    return `https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png`
+    return 'data:,'
   }
   return `${apiGateway}/${metadata.account}/video/${metadata.videoName}/${frameNumber}/image`
 }
@@ -144,12 +144,10 @@ const Grid: React.FC = () => {
                   >
                     <div
                       style={{
-                        fontSize: '1.5rem',
-                        borderRadius: '4px',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        fontSize: '1.5rem',
                         height: `${100 / gridSize}%`,
-                        flex: 2,
+                        justifyContent: 'center',
                       }}
                     >
                       <Upload.Dragger
@@ -166,6 +164,10 @@ const Grid: React.FC = () => {
                         }}
                         onChange={(info) => onChangeMetadata(gridIndex(row, column), info.file)}
                         onRemove={(_) => onRemoveMetadata(gridIndex(row, column))}
+                        style={{
+                          position: 'relative',
+                          border: '0px',
+                        }}
                       >
                         {
                           gridSize <= 4 &&
@@ -191,11 +193,6 @@ const Grid: React.FC = () => {
                             alt=""
                             layout="fill"
                             priority={true}
-                            style={{
-                              backgroundPosition: 'center',
-                              backgroundSize: 'contain',
-                              backgroundRepeat: 'no-repeat',
-                            }}
                           />
                         }
                       </Upload.Dragger>
