@@ -6,7 +6,7 @@ import { InboxOutlined } from '@ant-design/icons'
 import React from 'react'
 
 // Define static constants
-const apiGateway: string = 'http://127.0.0.1:9999'
+const apiGateway: string = 'http://backend.autodata.smartx.kr'
 const fps: number = 1.0
 const maxFrames: number = 7200
 const maxGridSize: number = 8
