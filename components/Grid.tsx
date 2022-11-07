@@ -29,6 +29,18 @@ const loadImage = (metadata: VideoMetadata | null, frameNumber: number) => {
   return `${apiGateway}/${metadata.account}/video/${metadata.videoName}/${frameNumber}/image`
 }
 
+// Define mapper functions
+const gridIndex = (row: number, column: number) => {
+  if (row == column) {
+    return (row + 1) * (column + 1) - 1
+  }
+  else if (row > column) {
+    return (row + 1) * row + column
+  } else {
+    return column * column + row
+  }
+}
+
 const Grid: React.FC = () => {
   // Load states
   const videoMetadataMatrixInitialState: VideoMetadataMatrix = {}
@@ -115,13 +127,13 @@ const Grid: React.FC = () => {
               {
                 Array.from({ length: gridSize }, (x, index) => index).map((row) =>
                   <Popover
-                    key={row * gridSize + column}
-                    title={`Figure ${row * gridSize + column}`}
+                    key={gridIndex(row, column)}
+                    title={`Figure ${gridIndex(row, column)}`}
                     content={
-                      (row * gridSize + column) in videoMetadataMatrix
+                      gridIndex(row, column) in videoMetadataMatrix
                         ? <div>
-                          <p>Account: {videoMetadataMatrix[row * gridSize + column].account}</p>
-                          <p>Video: {videoMetadataMatrix[row * gridSize + column].videoName}</p>
+                          <p>Account: {videoMetadataMatrix[gridIndex(row, column)].account}</p>
+                          <p>Video: {videoMetadataMatrix[gridIndex(row, column)].videoName}</p>
                           <p>Current Frame: {frameNumber}</p>
                         </div>
                         : <div>
@@ -151,8 +163,8 @@ const Grid: React.FC = () => {
                             reader.readAsText(req.file as Blob)
                           }
                         }}
-                        onChange={(info) => onChangeMetadata(row * gridSize + column, info.file)}
-                        onRemove={(_) => onRemoveMetadata(row * gridSize + column)}
+                        onChange={(info) => onChangeMetadata(gridIndex(row, column), info.file)}
+                        onRemove={(_) => onRemoveMetadata(gridIndex(row, column))}
                       >
                         {
                           gridSize <= 4 &&
@@ -174,8 +186,8 @@ const Grid: React.FC = () => {
                         }
                         {
                           <Image
-                            src={loadImage(videoMetadataMatrix[row * gridSize + column], frameNumber)}
-                            alt="car"
+                            src={loadImage(videoMetadataMatrix[gridIndex(row, column)], frameNumber)}
+                            alt=""
                             layout="fill"
                             priority={true}
                             style={{
