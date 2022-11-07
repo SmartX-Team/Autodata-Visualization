@@ -7,6 +7,7 @@ import React from 'react'
 
 // Define static constants
 const apiGateway: string = 'http://127.0.0.1:9999'
+const maxFrames: number = 7200
 const maxGridSize: number = 8
 const fps: number = 1.0
 const skipFrames: number = 0
@@ -49,7 +50,7 @@ const Grid: React.FC = () => {
   const [frameNumber, setframeNumber] = useState(1)
 
   // Define tick function
-  setTimeout(() => setframeNumber(frameNumber + skipFrames + 1), 1000.0 / fps)
+  setTimeout(() => setframeNumber((frameNumber + skipFrames + 1) % maxFrames), 1000.0 / fps)
 
   // Load and update the metadata
   const onChangeMetadata = (index: number, file: UploadFile<any>) => {
