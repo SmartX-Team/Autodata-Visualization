@@ -20,40 +20,49 @@ interface VideoMetadata {
 type VideoMetadataMatrix = { [index: number]: VideoMetadata }
 
 // Define API callers
-const loadImage = (account: string, imageHash: string, imageLength: number) =>
-  `${apiGateway}/${account}/image/${imageHash}/${imageLength}`
+// const loadImage = (metadata: VideoMetadata, frameNumber: number) =>
+//   `${apiGateway}/${metadata.account}/video/${metadata.videoName}/${frameNumber}`
+
+// Define API callers
+const loadImage = (metadata: VideoMetadata, frameNumber: number) => {
+  console.log(metadata)
+  return `${apiGateway}/${metadata.account}/video/${metadata.videoName}/${frameNumber}`
+}
 
 const Grid: React.FC = () => {
   // Load states
   const videoMetadataMatrixInitialState: VideoMetadataMatrix = {}
   const [videoMetadataMatrix, setvideoMetadataMatrix] = useState(videoMetadataMatrixInitialState)
   const [colCountKey, setColCountKey] = useState(1)
+  const [frameNumber, setframeNumber] = useState(1)
+
+  // Define tick function
+  setTimeout(() => setframeNumber(frameNumber + 1), 1000)
+  console.log(frameNumber)
 
   // Load and update the metadata
   const onChangeMetadata = (index: number, file: UploadFile<any>) => {
     const { status } = file
-    let isSucceeded = null
-
-    // Verbose
-    if (status !== 'uploading') {
-      console.log(file)
-    }
 
     // Check uploading state
     if (status === 'done') {
-      // Try to load metadata file
+      try {
+        // Try to parse metadata
+        // TODO: implement it
+        const metadata: VideoMetadata = file.response
 
-      isSucceeded = true
-    }
+        // Update metadata matrix
+        videoMetadataMatrix[index] = metadata
+        setvideoMetadataMatrix(videoMetadataMatrix)
 
-    // Finalize
-    if (isSucceeded === true) {
-      setvideoMetadataMatrix({
-        ...videoMetadataMatrix,
-      })
-      message.success(`Succeeded to load metadata: ${file.name}`)
-    } else if (status === 'error' || isSucceeded === false) {
-      message.error(`Failed to load metadata: ${file.name}`)
+        // Finished!
+        message.success(`Succeeded to load metadata: ${file.name}`)
+      }
+
+      // Fail on errors
+      catch {
+        message.error(`Failed to load metadata: ${file.name}`)
+      }
     }
   }
 
@@ -110,10 +119,15 @@ const Grid: React.FC = () => {
                     key={row * gridSize + column}
                     title={`Figure ${row * gridSize + column}`}
                     content={
-                      <div>
-                        <p>Name</p>
-                        <p>Description</p>
-                      </div>
+                      (row * gridSize + column) in videoMetadataMatrix
+                        ? <div>
+                          <p>Account: {videoMetadataMatrix[row * gridSize + column].account}</p>
+                          <p>Video: {videoMetadataMatrix[row * gridSize + column].videoName}</p>
+                          <p>Current Frame: {frameNumber}</p>
+                        </div>
+                        : <div>
+                          <p>Metadata not loaded</p>
+                        </div>
                     }
                   >
                     <div
@@ -129,7 +143,15 @@ const Grid: React.FC = () => {
                       <Upload.Dragger
                         name='Metadata File (.video.json)'
                         multiple={false}
-                        customRequest={(req) => { console.log(req) }}
+                        customRequest={(req) => {
+                          if (req.onSuccess != null) {
+                            var reader = new FileReader()
+                            reader.onload = (e) => {
+                              req.onSuccess!(e.target?.result, undefined)
+                            }
+                            reader.readAsText(req.file as Blob)
+                          }
+                        }}
                         onChange={(info) => onChangeMetadata(row * gridSize + column, info.file)}
                         onRemove={(_) => onRemoveMetadata(row * gridSize + column)}
                       >
@@ -152,8 +174,9 @@ const Grid: React.FC = () => {
                           </p>
                         }
                         {
+                          (row * gridSize + column) in videoMetadataMatrix ??
                           <Image
-                            src={loadImage("vM51oQZ6C6YcQkuYVYiT7EnJ7v9exVE4yHvaJMmTzoP", "bafkreihhfurndt3cebsf2sur5tjnvvrnmc4exqmfxxcf3dt5ex6ccmxxjm", 73882)}
+                            src={loadImage(videoMetadataMatrix[row * gridSize + column], frameNumber)}
                             alt="car"
                             layout="fill"
                             style={{
