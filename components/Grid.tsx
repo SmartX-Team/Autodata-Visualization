@@ -8,6 +8,8 @@ import React from 'react'
 // Define static constants
 const apiGateway: string = 'http://127.0.0.1:9999'
 const maxGridSize: number = 8
+const fps: number = 1.0
+const skipFrames: number = 0
 
 // Define derived static constants
 const availableGridSizes: Array<number> = Array.from({ length: maxGridSize }, (x, i) => i + 1);
@@ -20,13 +22,11 @@ interface VideoMetadata {
 type VideoMetadataMatrix = { [index: number]: VideoMetadata }
 
 // Define API callers
-// const loadImage = (metadata: VideoMetadata, frameNumber: number) =>
-//   `${apiGateway}/${metadata.account}/video/${metadata.videoName}/${frameNumber}`
-
-// Define API callers
-const loadImage = (metadata: VideoMetadata, frameNumber: number) => {
-  console.log(metadata)
-  return `${apiGateway}/${metadata.account}/video/${metadata.videoName}/${frameNumber}`
+const loadImage = (metadata: VideoMetadata | null, frameNumber: number) => {
+  if (metadata == null) {
+    return `https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png`
+  }
+  return `${apiGateway}/${metadata.account}/video/${metadata.videoName}/${frameNumber}/image`
 }
 
 const Grid: React.FC = () => {
@@ -37,8 +37,7 @@ const Grid: React.FC = () => {
   const [frameNumber, setframeNumber] = useState(1)
 
   // Define tick function
-  setTimeout(() => setframeNumber(frameNumber + 1), 1000)
-  console.log(frameNumber)
+  setTimeout(() => setframeNumber(frameNumber + skipFrames + 1), 1000.0 / fps)
 
   // Load and update the metadata
   const onChangeMetadata = (index: number, file: UploadFile<any>) => {
@@ -174,11 +173,11 @@ const Grid: React.FC = () => {
                           </p>
                         }
                         {
-                          (row * gridSize + column) in videoMetadataMatrix ??
                           <Image
                             src={loadImage(videoMetadataMatrix[row * gridSize + column], frameNumber)}
                             alt="car"
                             layout="fill"
+                            priority={true}
                             style={{
                               backgroundPosition: 'center',
                               backgroundSize: 'contain',
