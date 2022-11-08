@@ -12,6 +12,33 @@ const maxFrames: number = 7200
 const maxGridSize: number = 8
 const skipFrames: number = 0
 
+// Define known static constants (HARD_CODED)
+const accounts: { [key: string]: { name: string } } = {
+  'CbnWMvwuS92Py5dtDLTs7pBdx2cpJc55Z7cB7av2NxAZ': {
+    'name': 'Hot Storage 1',
+  },
+  'Ggj1Xmwn4GvkRWWfxxqHEUW9U74AuCisG97eWFGpuVor': {
+    'name': 'Hot Storage 2',
+  },
+  'FxzqomPuhkHSJNH22w4jewGFwTP63qB73mbVf3K7ajEk': {
+    'name': 'Warm Storage 1',
+  },
+}
+const videos: { [name: string]: { origin: string } } = {
+  'vehicle-000000-00': {
+    'origin': 'Hot Storage 1',
+  },
+  'vehicle-000000-01': {
+    'origin': 'Hot Storage 1',
+  },
+  'vehicle-000001-00': {
+    'origin': 'Hot Storage 2',
+  },
+  'vehicle-000001-01': {
+    'origin': 'Hot Storage 2',
+  },
+}
+
 // Define derived static constants
 const availableGridSizes: Array<number> = Array.from({ length: maxGridSize }, (x, i) => i + 1);
 
@@ -187,14 +214,32 @@ const Grid: React.FC = () => {
                             Drag & Drop
                           </p>
                         }
-                        {
-                          <Image
-                            src={loadImage(videoMetadataMatrix[gridIndex(row, column)], frameNumber)}
-                            alt=""
-                            layout="fill"
-                            priority={true}
-                          />
-                        }
+                        <Image
+                          src={loadImage(videoMetadataMatrix[gridIndex(row, column)], frameNumber)}
+                          alt=""
+                          layout="fill"
+                          priority={true}
+                        />
+                        <div
+                          className="ant-upload-text"
+                          style={{
+                            backgroundColor: '#DDCCAA',
+                            fontSize: '0.8rem',
+                            position: 'absolute',
+                            marginLeft: '16px',
+                            marginRight: '16px',
+                          }}
+                        >
+                          {
+                            gridSize <= 4 &&
+                              gridIndex(row, column) in videoMetadataMatrix
+                              ? `| Route | ${videoMetadataMatrix[gridIndex(row, column)].videoName} => ${accounts[videoMetadataMatrix[gridIndex(row, column)].account].name} ${accounts[videoMetadataMatrix[gridIndex(row, column)].account].name == videos[videoMetadataMatrix[gridIndex(row, column)].videoName].origin
+                                ? ''
+                                : `=> ${videos[videoMetadataMatrix[gridIndex(row, column)].videoName].origin}`
+                              } => NetAI Visualization Dashboard`
+                              : ''
+                          }
+                        </div>
                       </Upload.Dragger>
                     </div>
                   </Popover >
