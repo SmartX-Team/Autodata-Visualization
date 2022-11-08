@@ -81,7 +81,7 @@ const Home: NextPage = () => {
               fontSize: '1.5rem',
             }}
           >
-            (Prototype) Visualization of File Transfer to Data Lake
+            (Prototype) Visualization of File Transfer to Connected DataLake
           </Header>
           <Content style={{ margin: '0 16px' }}>
             <div
@@ -92,7 +92,7 @@ const Home: NextPage = () => {
             </div>
           </Content>
           <Footer style={{ textAlign: 'center', padding: '0 0 12px' }}>
-            ©2022 Created by Net AI Labs.
+            ©2022 Created by NetAI Labs.
           </Footer>
         </Layout>
       </Layout>
