@@ -233,9 +233,9 @@ const Grid: React.FC = () => {
                           {
                             gridSize <= 4 &&
                               gridIndex(row, column) in videoMetadataMatrix
-                              ? `| Route | ${videoMetadataMatrix[gridIndex(row, column)].videoName} => ${accounts[videoMetadataMatrix[gridIndex(row, column)].account].name} ${accounts[videoMetadataMatrix[gridIndex(row, column)].account].name == videos[videoMetadataMatrix[gridIndex(row, column)].videoName].origin
+                              ? `| Route | ${videoMetadataMatrix[gridIndex(row, column)].videoName} => ${videos[videoMetadataMatrix[gridIndex(row, column)].videoName].origin} ${accounts[videoMetadataMatrix[gridIndex(row, column)].account].name == videos[videoMetadataMatrix[gridIndex(row, column)].videoName].origin
                                 ? ''
-                                : `=> ${videos[videoMetadataMatrix[gridIndex(row, column)].videoName].origin}`
+                                : `=> ${accounts[videoMetadataMatrix[gridIndex(row, column)].account].name}`
                               } => NetAI Visualization Dashboard`
                               : ''
                           }
